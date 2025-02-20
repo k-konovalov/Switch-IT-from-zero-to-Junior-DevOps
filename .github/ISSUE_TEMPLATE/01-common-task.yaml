@@ -1,0 +1,13 @@
+name: Common Task
+description: Default repo task.a
+title: "[00_Label] Task name"
+labels: empty
+body:
+  - type: textarea
+    id: what-to-do
+    attributes:
+      label: What you need to do?
+      placeholder: Some valuable task to do!
+      value: "P.S. Branch name: practice/{task_chapter_num}/{auto_issue_num}{some_task_name}\nFor ex.: practice/00/1-install-ubuntu"
+    validations:
+      required: true
