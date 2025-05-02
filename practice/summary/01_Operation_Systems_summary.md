@@ -286,27 +286,6 @@ iface ens18 inet static
 - Переустановка: `apt-get reinstall prog_name` или `install --reinstall`
 - Удаление: `apt-get remove` / `apt-get purge` (с config фалами)
 
-#### Добавление репозитория (Debian)
-В Debian каждый репозиторий состоит из нескольких веток (разделов):
-
-- main ― эта ветка включается в каждый дистрибутив. Она подчиняется принципам свободного программного обеспечения. Ветка не зависит от других пакетов, которые не входят в раздел «main»;
-- contrib ― эта ветка подчиняется принципам свободного ПО и зависит только от пакетов, которые не входят в раздел «main». Может понадобиться прошивка ROM или ПО, которое имеет собственника, например Java от Oracle;
-- non-free ― содержит пакеты, которые противоречат принципам свободного программного обеспечения или имеют патенты и другие юридические ограничения.
-
-При добавлении надо знать текущий релиз.
-- настрой репозиторий в apt не существующий по умолчанию (зависит от выбранной ОС)
-- в целом изучи добавление / убавление репозиториев в apt
-
-- Отредактировать файл `/etc/apt/sources.list`
-- В конец файла вставить команду с адресом репозитория:
-  - deb ― указывает на то, что это пакет Debian;
-  - ссылка на репозиторий пакетов Debian (выглядит, как обычный URL-адрес сайта). На сайте Debian есть ссылки на зеркала, а также список сгруппированных пакетов, по категориям Stable, Testing, Unstable;
-  - название версии Debian ― кодовое имя дистрибутива, псевдоним (например, Buster ― Debian 10, Stretch ― Debian 9, Jessie ― Debian 8, и т.д);
-  - main ― тип ПО (main, contrib, non-free)
-  - пример: `deb https://packages.debian.org/buster/libc6 buster main`
-- Вызвать `apt-get update` для обновления пакетов
-- Удаление производится таким же образом
-
 #### mc
 Midnight Commander: файловый менджер с текстовым интерфейсом
 
@@ -363,6 +342,66 @@ Midnight Commander: файловый менджер с текстовым инт
 - подсветка синтаксиса
 - автоподсказки
 
+#### Добавление репозитория (Debian)
+В Debian каждый репозиторий состоит из нескольких веток (разделов):
+
+- main ― эта ветка включается в каждый дистрибутив. Она подчиняется принципам свободного программного обеспечения. Ветка не зависит от других пакетов, которые не входят в раздел «main»;
+- contrib ― эта ветка подчиняется принципам свободного ПО и зависит только от пакетов, которые не входят в раздел «main». Может понадобиться прошивка ROM или ПО, которое имеет собственника, например Java от Oracle;
+- non-free ― содержит пакеты, которые противоречат принципам свободного программного обеспечения или имеют патенты и другие юридические ограничения.
+
+При добавлении надо знать текущий релиз и архитектуру процессора.
+- `cat /etc/os-release | grep VERSION_CODENAME`: узнаем версию ОС
+- `$(dpkg --print-architecture)`: узнаем архитектуру процессора
+
+- Некоторые репозитории защищены ключами GPG или pkp
+- Отредактировать файл `/etc/apt/sources.list`
+- В конец файла вставить команду с адресом репозитория:
+  - deb ― указывает на то, что это пакет Debian;
+  - ссылка на репозиторий пакетов Debian (выглядит, как обычный URL-адрес сайта). На сайте Debian есть ссылки на зеркала, а также список сгруппированных пакетов, по категориям Stable, Testing, Unstable;
+  - название версии Debian ― кодовое имя дистрибутива, псевдоним (например, Buster ― Debian 10, Stretch ― Debian 9, Jessie ― Debian 8, и т.д);
+  - main ― тип ПО (main, contrib, non-free)
+  - пример: `deb https://packages.debian.org/buster/libc6 buster main`
+- Вызвать `apt-get update` для обновления пакетов
+- Удаление производится таким же образом
+
+Альтернативные варианты добавления:
+- Вставить строку в /etc/apt/sources.list (основной)
+  - `deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/elastic-7.x.gpg] https://artifacts.elastic.co/packages/7.x/apt stable main`
+- Создание файла .list в sources.list.d
+  - `echo "deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/elastic-7.x.gpg] https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-7.x.list > /dev/null`
+- Создание файла .sources в sources.list.d
+  - `/etc/apt/sources.list.d/elastic-7.x.sources`
+  - содержание файла:
+  ```
+  Types: deb
+  Architectures: amd64 arm64
+  Signed-By: /usr/share/keyrings/elastic-7.x.gpg
+  URIs: https://artifacts.elastic.co/packages/7.x/apt
+  Suites: stable
+  Components: main
+  ```
+
+##### Задание
+- настрой репозиторий в apt не существующий по умолчанию (зависит от выбранной ОС)
+- в целом изучи добавление / убавление репозиториев в apt
+
+##### Выполнение (на примере Docker CE)
+- нужно скачать GPG ключ
+  - `sudo apt-get update` 
+  - `sudo apt-get install ca-certificates curl`: ставим нужные зависимости
+  - `sudo install -m 0755 -d /etc/apt/keyrings`: создаем хранилище ключей
+  - `sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc`: скачиваем gpg ключ
+  - `sudo chmod a+r /etc/apt/keyrings/docker.asc`: открываем на чтение всем
+- `cat /etc/os-release | grep VERSION_CODENAME`: узнаем версию ОС
+- `$(dpkg --print-architecture)`: узнаем архитектуру процессора
+- Добавил репозиторий
+- `echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian bookworm stable" >> /etc/apt/sources.list`
+  - deb: source использует обычную архитектуру Debian. 
+  - arch=amd64,arm64: архитектуры, на которые будут загружены данные APT. Здесь это amd64 и arm64. 
+  - signed-by=/etc/apt/keyrings/docker.asc: ключ, используемый для авторизации этого источника
+  - https://download.docker.com/linux/debian: URI, репозитория 
+  - /etc/apt/sources.list: хранилище данных о репозиториях
+- `sudo apt-get update`: обновляем
 
 ## Вопросы к ментору
 - Как размечать диски в Unix?
@@ -415,3 +454,7 @@ Midnight Commander: файловый менджер с текстовым инт
 - [Grub/os-prober problems with dual booting windows and arch](https://bbs.archlinux.org/viewtopic.php?id=283411)
 - [Команда Linux blkid](https://linuxcookbook.ru/articles/komanda-linux-blkid)
 - [Данные о дисках: df, lsblk, parted, fdisk](https://timeweb.cloud/docs/unix-guides/troubleshooting-unix/disk-data-df-lsblk-parted-fdisk)
+- [Сторонние репозитории для Debian Stable](https://vk.com/@-53008948-storonnie-repozitorii-dlya-debian-stable)
+- [Install Docker using the apt repository](https://docs.docker.com/engine/install/debian/#install-using-the-repository)
+- [Как справиться с устареванием apt-key и add-apt-repository с помощью gpg в Ubuntu 22.04](https://habr.com/ru/articles/683716/)
+- [Install Docker Engine on Debian](https://docs.docker.com/engine/install/debian/)
