@@ -54,46 +54,13 @@ DHCP / DNS сервером выступает сетевой маршрутиз
 ![PVE-network-configuration-002.png](img/PVE-network-configuration-002.png)
 
 ###### Хост
-Рабочий вывод после `nano /etc/network/interfaces`
-```
-auto lo
-iface lo inet loopback
-
-auto enp6s0
-iface enp6s0 inet dhcp # Позволяет получить ip динамически
-
-auto vmbr0
-iface vmbr0 inet static            # Сетевой мост
-        address 192.168.174.100/24 # ip адресс выдан статически на маршрутизаторе
-        gateway 192.168.174.1      # Локальный адрес домашнего сетевого маршрутизатора
-        bridge-ports enp6s0        # через какой сетевой интерфейс выход в интернет (ethernet / RJ-45)
-        bridge-stp off
-        bridge-fd 0
-# Host external network
-
-source /etc/network/interfaces.d/*
-```
-Рабочий вывод после `nano /etc/resolv.conf` -
-```
-domain fritz.box
-search fritz.box
-nameserver 192.168.174.1 # Локальный адрес домашнего сетевого маршрутизатора
-```
+Рабочий вывод после `nano /etc/network/interfaces` см. в [host_interfaces.d](../../work_directory/01/host_interfaces.d).
+Рабочий вывод после `nano /etc/resolv.conf` см. в [resolv.conf](../../work_directory/01/host_resolv.conf).
 Рабочий вывод после `iptables -t nat -L`: пустая таблица.
 
 ###### Дочерняя VM
 - Network Device: Intel E1000
-```
-source /etc/network/interfaces.d/*
-auto lo
-iface lo inet loopback
-
-#Primary network interface
-auto ens18
-iface ens18 inet static
-        address 192.168.174.2
-        gateway 192.168.174.1
-```
+- Рабочий вывод после `nano /etc/network/interfaces` см. в [vm_interfaces.d](../../work_directory/01/vm_interfaces.d)
 
 ### 1.2 Создание n ВМ
 - Из дистрибутивов взял Debian 12 из образа. 
