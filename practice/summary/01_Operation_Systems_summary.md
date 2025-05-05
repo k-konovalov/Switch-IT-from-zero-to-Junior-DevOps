@@ -262,7 +262,7 @@ iface ens18 inet static
   - `blkid`: поиск или печать атрибутов диска
   - `parted -l`, `fdisk -l`: просмотреть размеры дисков и разделов.
 
-### Выполнение задания
+#### Выполнение задания
 1. Создай двух пользователей и общую папку между ними.
 2. Оба пользователя должны уметь читать и писать в эту папку
    1. Под рутом:
@@ -280,14 +280,29 @@ iface ens18 inet static
       3. `chmod 660 file`: даем разрешение на запись всем в группе
    3. Повторить для другого пользователя
 
-### 3. Работа с пакетным менеджером apt
+### 3.1 Работа с пакетным менеджером apt
 Установи с помощью apt (mc, zsh, htop, btop, netstat, net-tools). 
 - Установка: `apt-get install prog_name`.
 - Переустановка: `apt-get reinstall prog_name` или `install --reinstall`
 - Удаление: `apt-get remove` / `apt-get purge` (с config фалами)
 
 #### mc
-Midnight Commander: файловый менджер с текстовым интерфейсом
+Midnight Commander: файловый менджер с текстовым интерфейсом.
+
+#### Shell (Bourne again shell)
+исполняемый файл: bash.
+- Дефолт: оболочка есть в большинстве GNU/Linux дистро
+- Лёгкая конфигурация и настройка: доступна в .bashrc в вашей домашней директории
+
+##### Zsh (Z Shell)
+- лучше автокомплит
+- возможные значения после tab
+- плагины
+- темы
+
+##### Fish «Friendly Interactive SHell»
+- подсветка синтаксиса
+- автоподсказки
 
 #### atop, btop, htop: Контроль нагрузки процессоров
 - top:
@@ -327,22 +342,21 @@ Midnight Commander: файловый менджер с текстовым инт
 - TIME — общее время работы процесса;
 - COMMAND — имя процесса (команда, которой был запущен процесс).
 
-#### Shell (Bourne again shell)
-исполняемый файл: bash.
-- Дефолт: оболочка есть в большинстве GNU/Linux дистро
-- Лёгкая конфигурация и настройка: доступна в .bashrc в вашей домашней директории
+##### netstat / ss
+Мониторинг сетевого сети: обзор сетевых соединений, таблиц маршрутизации, статистики интерфейсов и другой важной информации, связанной с сетью.
+Часто используемые команды:
+- -a: Показывает все прослушивающие порты и активные соединения
+- -t: Отображает TCP-соединения
+- -u: Показывает UDP-соединения
+- -n: Показывает числовые адреса вместо разрешения хостов и портов
+- -l: Показывает только прослушивающие сокеты
+- -p: Отображает PID и имя программы
+- -r: Показывает таблицу маршрутизации
+- -i: Показывает статистику сетевых интерфейсов
+- -s: Показывает статистику протоколов
+- -c: непрерывное отображение (2 сек), комбинируетяс с другими командами (-ct) (но лучше через while с sleep)
 
-##### Zsh (Z Shell)
-- лучше автокомплит
-- возможные значения после tab
-- плагины
-- темы
-
-##### Fish «Friendly Interactive SHell»
-- подсветка синтаксиса
-- автоподсказки
-
-#### Добавление репозитория (Debian)
+### 3.2 Добавление репозитория (Debian)
 В Debian каждый репозиторий состоит из нескольких веток (разделов):
 
 - main ― эта ветка включается в каждый дистрибутив. Она подчиняется принципам свободного программного обеспечения. Ветка не зависит от других пакетов, которые не входят в раздел «main»;
@@ -381,11 +395,11 @@ Midnight Commander: файловый менджер с текстовым инт
   Components: main
   ```
 
-##### Задание
+#### Задание
 - настрой репозиторий в apt не существующий по умолчанию (зависит от выбранной ОС)
 - в целом изучи добавление / убавление репозиториев в apt
 
-##### Выполнение (на примере Docker CE)
+#### Выполнение (на примере Docker CE)
 - нужно скачать GPG ключ
   - `sudo apt-get update` 
   - `sudo apt-get install ca-certificates curl`: ставим нужные зависимости
@@ -444,6 +458,7 @@ Midnight Commander: файловый менджер с текстовым инт
 - [Как посмотреть пользователей в Linux](https://timeweb.cloud/tutorials/linux/kak-posmotret-polzovatelej-v-linux)
 - [Arch Linux | Группы](https://wiki.archlinux.org/title/Users_and_groups_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)#%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA_%D0%B3%D1%80%D1%83%D0%BF%D0%BF)
 - [Habr | Права в Linux](https://habr.com/ru/articles/469667/)
+- [Общие папки Linux](https://losst.pro/obshhie-papki-linux)
 - [О разных командных оболочках Linux и Unix](https://habr.com/ru/articles/157283/)
 - [How to disable X server autostart in Debian Jessie?](https://unix.stackexchange.com/questions/264393/how-to-disable-x-server-autostart-in-debian-jessie)
 - [htop и многое другое на пальцах](https://habr.com/ru/articles/316806/)
@@ -458,3 +473,4 @@ Midnight Commander: файловый менджер с текстовым инт
 - [Install Docker using the apt repository](https://docs.docker.com/engine/install/debian/#install-using-the-repository)
 - [Как справиться с устареванием apt-key и add-apt-repository с помощью gpg в Ubuntu 22.04](https://habr.com/ru/articles/683716/)
 - [Install Docker Engine on Debian](https://docs.docker.com/engine/install/debian/)
+- [Осваиваем команду Linux Netstat: от основ до продвинутого мониторинга сети](https://go.lightnode.com/ru/tech/linux-netstat-command)
