@@ -246,22 +246,21 @@ DHCP / DNS сервером выступает сетевой маршрутиз
 
 #### Выполнение задания
 1. Создай двух пользователей и общую папку между ними.
+   1. Под рутом:
+      1. `groupadd admins`: добавить новую группу
+      2. `adduser user_01`: добавить пользователя
+      3. `passwd user_01`: и задать ему пароль
+      4. `usermod -G admins user_01`: добавление пользователя в созданную группу
+      5. `mkdir ./tmp/shared`: создаем общую папку
+      6. `chown :admins shared`: делаем ей группу admins
+      7. chmod 770 shared: даем права на выполнение
+      8. chmod g+s shared: созданные файлы наследуют владельца каталога, а не пользователя (SGID)
+   2. Под пользователем:
+      1. `newgrp admins`: сменить эффективную группу пользователя
+      2. `touch file`: создаем файл в общей папке
+      3. `chmod 660 file`: даем разрешение на запись всем в группе
 2. Оба пользователя должны уметь читать и писать в эту папку
-1. Под рутом:
-   1. `groupadd admins`: добавить новую группу
-   2. `adduser user_01`: добавить пользователя
-   3. `passwd user_01`: и задать ему пароль
-   4. `usermod -G admins user_01`: добавление пользователя в созданную группу
-   5. `mkdir ./tmp/shared`: создаем общую папку
-   6. `chown :admins shared`: делаем ей группу admins
-   7. chmod 770 shared: даем права на выполнение
-   8. chmod g+s shared: созданные файлы наследуют владельца каталога, а не пользователя
-2. Под пользователем:
-   1. `newgrp admins`: сменить эффективную группу пользователя
-   2. `touch file`: создаем файл в общей папке
-   3. `chmod 660 file`: даем разрешение на запись всем в группе
-3. Повторить для другого пользователя
-
+   1. Повторить для другого пользователя
 
 ## Вопросы к ментору
 - Как размечать диски в Unix?
@@ -344,3 +343,11 @@ DHCP / DNS сервером выступает сетевой маршрутиз
 - [Как справиться с устареванием apt-key и add-apt-repository с помощью gpg в Ubuntu 22.04](https://habr.com/ru/articles/683716/)
 - [Install Docker Engine on Debian](https://docs.docker.com/engine/install/debian/)
 - [Осваиваем команду Linux Netstat: от основ до продвинутого мониторинга сети](https://go.lightnode.com/ru/tech/linux-netstat-command)
+### 01_02
+- Пользователь: добавление, удаление, права
+  - [Arch Linux | User and Groups](https://wiki.archlinux.org/title/Users_and_groups_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9))
+  - [Как посмотреть пользователей в Linux](https://timeweb.cloud/tutorials/linux/kak-posmotret-polzovatelej-v-linux)
+  - [Общие папки Linux](https://losst.pro/obshhie-papki-linux)
+- Группы
+  - [Arch Linux | Группы](https://wiki.archlinux.org/title/Users_and_groups_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)#%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA_%D0%B3%D1%80%D1%83%D0%BF%D0%BF)
+  - [Habr | Права в Linux](https://habr.com/ru/articles/469667/)
