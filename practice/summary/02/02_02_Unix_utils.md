@@ -121,3 +121,6 @@
 - [Игра для изучения Vim](https://habr.com/ru/articles/377721/)
 - [Как освоить Vim?](https://habr.com/ru/companies/ruvds/articles/544160/)
 - [vimtutor](https://manpages.ubuntu.com/manpages/bionic/ru/man1/vimtutor.1.html)
+- [vimium](https://github.com/philc/vimium)
+- [vimtutor-sequel](https://github.com/micahkepe/vimtutor-sequel)
+- книга Vim - Vi Improved
