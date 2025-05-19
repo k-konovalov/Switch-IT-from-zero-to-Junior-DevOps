@@ -7,8 +7,8 @@ Fork, Github Flow and go!
 
 ### Содержание
 - задания лежат в `/theory`
-- конфиги класть в `/practice/work_directory`
-- конспекты класть в `/practice/summary`
+- конфиги класть в `/practice/work_directory/` в номерные подпапки (00, 02 и т.п)
+- конспекты класть в в `/practice/summary/` номерные подпапки (00, 01 и т.п)
 
 ## Как работать с заданиями
 Лучше всего оформить в Github Projects доску Kanban, чтобы можно было отслеживать текущее состояние по базовым статусам To Do - In Progress - Done.
