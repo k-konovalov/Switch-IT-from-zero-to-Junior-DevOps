@@ -32,6 +32,10 @@ plugins=(
 - [Тема: powerlevel10k](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file)
 - autoenv: включение env для Python3
 
+## Вопросы к ментору
+- Можно ли как-то пробрасывать настройки оболочки в пробрасываемую машину на период сессии?
+- Какие плагины используешь и почему?
+
 ## Ссылки
 - [Oh My Zsh - a delightful open source framework for Zsh](https://ohmyz.sh/)
 - [The Only 6 Zsh Plugins You Need](https://catalins.tech/zsh-plugins/)
