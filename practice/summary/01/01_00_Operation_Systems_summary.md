@@ -51,7 +51,7 @@ DHCP / DNS сервером выступает сетевой маршрутиз
 Рабочий вывод после `iptables -t nat -L`: пустая таблица.
 
 ##### Дочерняя VM
-- Network Device: Intel E1000
+- Network Device: Intel E1000 (virtIO может не работать под Windows)
 - Рабочий вывод после `nano /etc/network/interfaces` см. в [vm_interfaces.d](../../work_directory/01/vm_interfaces.d)
 
 ### 1.2 Создание n ВМ
