@@ -1,7 +1,7 @@
 # 02.05 Unix utils - Zsh
 
 ## Теория
-
+Отсутствует.
 
 ## Задание 1: сделай себе более наглядную консоль / терминал
 - Накатил скрипт установки `sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"`
@@ -29,6 +29,8 @@ plugins=(
 - [Zsh-bat Plugin](https://github.com/fdellwing/zsh-bat): замена cat на bat. Подсветка синтаксиса выводимых тектсовых файлов.
 - [zsh-vi-mode](https://github.com/jeffreytse/zsh-vi-mode): vim подобная навигация в строке + редактирование команды
 - [autoupdate-zsh-plugin](https://github.com/tamcore/autoupdate-oh-my-zsh-plugins): автообновление плагинов
+- [Тема: powerlevel10k](https://github.com/romkatv/powerlevel10k?tab=readme-ov-file)
+- autoenv: включение env для Python3
 
 ## Ссылки
 - [Oh My Zsh - a delightful open source framework for Zsh](https://ohmyz.sh/)
