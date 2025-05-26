@@ -60,7 +60,11 @@ DHCP / DNS сервером выступает сетевой маршрутиз
 - Нейминг VM: n.child.debian
 - Каждую вручную установил через Graphical install.
 - По-дефолту завел пользователя root и kirillkonovalov.
-- Отключил X-Server: `systemctl set-default multi-user.target`
+
+#### Troubeshooting
+- trying to aquire lock...TASK ERROR: can't lock file '/var/lock/qemu-server/...
+  - manually deleting the file under /var/lock/qemu-server/lock-XXXXXX.conf works for me.
+- Отключить X-Server: `systemctl set-default multi-user.target`
   - для включения: `systemctl set-default graphical.target`
 
 ### Ручное добавление пункта меню в Grub (dualboot)
@@ -130,3 +134,4 @@ DHCP / DNS сервером выступает сетевой маршрутиз
   - [В чем разница между дистрибутивами linux и какой выбрать?](https://qna.habr.com/q/192159)
   - [Установка и первоначальная настройка Debian 11 для сервера](https://interface31.ru/tech_it/2022/08/linux-nachinayushhim-ustanovka-i-pervonachal-naya-nastroyka-debian-11-dlya-servera.html)
   - [How to disable X server autostart in Debian Jessie?](https://unix.stackexchange.com/questions/264393/how-to-disable-x-server-autostart-in-debian-jessie)
+  - [trying to aquire lock...TASK ERROR: can't lock file '/var/lock/qemu-server/...](https://forum.proxmox.com/threads/trying-to-aquire-lock-task-error-cant-lock-file-var-lock-qemu-server.16235/)
