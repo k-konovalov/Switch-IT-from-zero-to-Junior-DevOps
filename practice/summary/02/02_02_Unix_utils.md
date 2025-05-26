@@ -55,6 +55,23 @@
 - Control + D (в режиме команд): подстановка всех возможных команды 
 - TAB (в режиме команд): подстановка команды
 
+**Продвинутая навигация**  
+- Флаги открытия
+  -p  Отркыть N вкладок pages (default: one for each file)
+  -o  Open N окон (горизонтально)
+  -O  см. выше (вертикально)
+- Команды
+  -o is like :split, -O is like :vsplit
+  - :sp filename for a horizontal split
+  - :vsp filename or :vs filename for a vertical split
+- Сочетания клавиш
+  - Сtrl+W, S (case does not matter) for horizontal splitting
+  - Ctrl+W, v (lower case) for vertical splitting
+  - Ctrl+W, q (lower case) to close one
+  - Ctrl+W, Ctrl+W to switch between windows
+  - Ctrl+W, j (or k, h, l; lowercase) to switch to adjacent window (down, up, left, right respectively)
+  - Ctrl+W, t (or b) to switch to the top-left (or bottom-right) pane
+
 **Построение команды: {сколько раз}{оператор}{сколько раз}{область действия}**
 - dw: удаление слова от каретки до конца **слова**
 - d$: удаление от коретки до конца **строки**
@@ -123,4 +140,5 @@
 - [vimtutor](https://manpages.ubuntu.com/manpages/bionic/ru/man1/vimtutor.1.html)
 - [vimium](https://github.com/philc/vimium)
 - [vimtutor-sequel](https://github.com/micahkepe/vimtutor-sequel)
+- [How to open files in vertically/horizontal split windows in Vim from the command line](https://superuser.com/questions/486532/how-to-open-files-in-vertically-horizontal-split-windows-in-vim-from-the-command)
 - книга Vim - Vi Improved
