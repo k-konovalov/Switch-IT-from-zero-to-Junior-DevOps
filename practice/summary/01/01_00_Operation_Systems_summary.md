@@ -315,19 +315,14 @@ DHCP / DNS сервером выступает сетевой маршрутиз
 - [Что такое дистрибутив Linux](https://ruweb.net/articles/distributiv-linux-chto-eto)
 - [В чем разница между дистрибутивами linux и какой выбрать?](https://qna.habr.com/q/192159)
 - [Установка и первоначальная настройка Debian 11 для сервера](https://interface31.ru/tech_it/2022/08/linux-nachinayushhim-ustanovka-i-pervonachal-naya-nastroyka-debian-11-dlya-servera.html)
-- Сеть
-  - [Основы iptables для начинающих. Часть 1. Общие вопросы](https://interface31.ru/tech_it/2020/02/osnovy-iptables-dlya-nachinayushhih-chast-1.html)
-  - [Основы iptables для начинающих. Часть 2. Таблица filter](https://interface31.ru/tech_it/2020/09/osnovy-iptables-dlya-nachinayushhih-chast-2-tablica-filter.html)
-  - [Основы iptables для начинающих. Часть 3. Таблица nat](https://interface31.ru/tech_it/2021/07/osnovy-iptables-dlya-nachinayushhih-chast-3-tablica-nat.html)
-  - [Основы iptables для начинающих. Часть 4. Таблица nat - типовые сценарии использования](https://interface31.ru/tech_it/2021/08/osnovy-iptables-dlya-nachinayushhih-chast-4-tablica-nat-tipovye-scenarii-ispolzovaniya.html)
-- Proxmox
-  - [Установка сети в Proxmox](https://help.reg.ru/support/vydelennyye-servery-i-dc/administrirovaniye-vydelennykh-serverov/ustanovka-i-nastroyka-seti-v-proxmox-ve#1)
-  - [Настраиваем сеть в Proxmox](https://interface31.ru/tech_it/2019/10/nastraivaem-set-v-proxmox-ve.html)
-- [Arch Linux | User and Groups](https://wiki.archlinux.org/title/Users_and_groups_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9))
-- [Как посмотреть пользователей в Linux](https://timeweb.cloud/tutorials/linux/kak-posmotret-polzovatelej-v-linux)
-- [Arch Linux | Группы](https://wiki.archlinux.org/title/Users_and_groups_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)#%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA_%D0%B3%D1%80%D1%83%D0%BF%D0%BF)
-- [Habr | Права в Linux](https://habr.com/ru/articles/469667/)
-- [Общие папки Linux](https://losst.pro/obshhie-papki-linux)
+- Пользователь: добавление, удаление, права
+  - [Arch Linux | User and Groups](https://wiki.archlinux.org/title/Users_and_groups_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9))
+  - [Как посмотреть пользователей в Linux](https://timeweb.cloud/tutorials/linux/kak-posmotret-polzovatelej-v-linux)
+  - [Общие папки Linux](https://losst.pro/obshhie-papki-linux)
+- Группы
+  - [Arch Linux | Группы](https://wiki.archlinux.org/title/Users_and_groups_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)#%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA_%D0%B3%D1%80%D1%83%D0%BF%D0%BF)
+  - [Habr | Права в Linux](https://habr.com/ru/articles/469667/)
+
 - [О разных командных оболочках Linux и Unix](https://habr.com/ru/articles/157283/)
 - [How to disable X server autostart in Debian Jessie?](https://unix.stackexchange.com/questions/264393/how-to-disable-x-server-autostart-in-debian-jessie)
 - [htop и многое другое на пальцах](https://habr.com/ru/articles/316806/)
@@ -343,11 +338,3 @@ DHCP / DNS сервером выступает сетевой маршрутиз
 - [Как справиться с устареванием apt-key и add-apt-repository с помощью gpg в Ubuntu 22.04](https://habr.com/ru/articles/683716/)
 - [Install Docker Engine on Debian](https://docs.docker.com/engine/install/debian/)
 - [Осваиваем команду Linux Netstat: от основ до продвинутого мониторинга сети](https://go.lightnode.com/ru/tech/linux-netstat-command)
-### 01_02
-- Пользователь: добавление, удаление, права
-  - [Arch Linux | User and Groups](https://wiki.archlinux.org/title/Users_and_groups_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9))
-  - [Как посмотреть пользователей в Linux](https://timeweb.cloud/tutorials/linux/kak-posmotret-polzovatelej-v-linux)
-  - [Общие папки Linux](https://losst.pro/obshhie-papki-linux)
-- Группы
-  - [Arch Linux | Группы](https://wiki.archlinux.org/title/Users_and_groups_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)#%D0%A1%D0%BF%D0%B8%D1%81%D0%BE%D0%BA_%D0%B3%D1%80%D1%83%D0%BF%D0%BF)
-  - [Habr | Права в Linux](https://habr.com/ru/articles/469667/)
