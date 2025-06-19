@@ -465,6 +465,7 @@ Midnight Commander: файловый менджер с текстовым инт
 ### 01_02
 - [Yandex Cloud Marketplace](https://yandex.cloud/ru/marketplace?categories=os&pageSize=75)
 - [Что такое дистрибутив Linux](https://ruweb.net/articles/distributiv-linux-chto-eto)
+- [О разных командных оболочках Linux и Unix](https://habr.com/ru/articles/157283/)
 - [В чем разница между дистрибутивами linux и какой выбрать?](https://qna.habr.com/q/192159)
 - [Установка и первоначальная настройка Debian 11 для сервера](https://interface31.ru/tech_it/2022/08/linux-nachinayushhim-ustanovka-i-pervonachal-naya-nastroyka-debian-11-dlya-servera.html)
 - Пользователь: добавление, удаление, права
@@ -488,19 +489,3 @@ Midnight Commander: файловый менджер с текстовым инт
   - [Как справиться с устареванием apt-key и add-apt-repository с помощью gpg в Ubuntu 22.04](https://habr.com/ru/articles/683716/)
   - [Install Docker using the apt repository](https://docs.docker.com/engine/install/debian/#install-using-the-repository)
   - [Install Docker Engine on Debian](https://docs.docker.com/engine/install/debian/)
-
-- [О разных командных оболочках Linux и Unix](https://habr.com/ru/articles/157283/)
-- [How to disable X server autostart in Debian Jessie?](https://unix.stackexchange.com/questions/264393/how-to-disable-x-server-autostart-in-debian-jessie)
-- [htop и многое другое на пальцах](https://habr.com/ru/articles/316806/)
-- [Контроль нагрузки и процессов: top, htop, atop](https://timeweb.cloud/docs/unix-guides/troubleshooting-unix/load-and-process-control-top-htop-atop)
-- [Как добавить официальный репозиторий в Debian](https://help.reg.ru/support/servery-vps/oblachnyye-servery/ustanovka-programmnogo-obespecheniya/debian-repozitorii#3)
-- [Solution to os-prober not finding other operating systems (Windows & Linux)](https://www.umutsagir.com/solution-to-os-prober-not-finding-other-operating-systems-windows-linux/)
-- [How can I add Windows 11 to grub menu?](https://askubuntu.com/questions/1425637/how-can-i-add-windows-11-to-grub-menu)
-- [Grub/os-prober problems with dual booting windows and arch](https://bbs.archlinux.org/viewtopic.php?id=283411)
-- [Команда Linux blkid](https://linuxcookbook.ru/articles/komanda-linux-blkid)
-- [Данные о дисках: df, lsblk, parted, fdisk](https://timeweb.cloud/docs/unix-guides/troubleshooting-unix/disk-data-df-lsblk-parted-fdisk)
-- [Сторонние репозитории для Debian Stable](https://vk.com/@-53008948-storonnie-repozitorii-dlya-debian-stable)
-- [Install Docker using the apt repository](https://docs.docker.com/engine/install/debian/#install-using-the-repository)
-- [Как справиться с устареванием apt-key и add-apt-repository с помощью gpg в Ubuntu 22.04](https://habr.com/ru/articles/683716/)
-- [Install Docker Engine on Debian](https://docs.docker.com/engine/install/debian/)
-- [Осваиваем команду Linux Netstat: от основ до продвинутого мониторинга сети](https://go.lightnode.com/ru/tech/linux-netstat-command)
