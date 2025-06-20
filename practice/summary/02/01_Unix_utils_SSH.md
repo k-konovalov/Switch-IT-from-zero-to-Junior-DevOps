@@ -133,6 +133,7 @@ ForwardAgent yes
     -  Чтобы ключи автоматически добавлялись в агент
       - добавить строчку `AddKeysToAgent yes` в файл `~/.ssh/config`
 
+## 2. Задание - настройка прав пользователя через sudoers
 
 ## Troubleshooting
 - `Warning remote host identification has changed!`
