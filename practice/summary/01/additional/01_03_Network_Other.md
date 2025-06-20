@@ -1,4 +1,4 @@
-# 01.04. Network - Other
+# 01.03. Network - Other
 
 ## Полезные команды при работе с сетью
 - `systemctl restart networking`
