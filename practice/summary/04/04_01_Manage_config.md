@@ -2,7 +2,17 @@
 
 ## Теория
 Ansible: безагентная система управления конфигурациями по SSH через YAML файлы. (аналоги: Puppet, Chef и Salt) 
-Применяется для автоматизации настройки и развёртывания программного обеспечения.  
+Применяется для автоматизации настройки и развёртывания программного обеспечения.
+
+### Преимущества (Puppet)
+[Источник](https://habr.com/ru/companies/selectel/articles/196620/#comment_7118778)
+- Он намного проще, чем Puppet (в т.ч. благодаря гибкости)
+- Модули на все или почти все случаи жизни из коробки (в паппете аналог этому — ресурсы)
+- Которых нет — очень просто дописываются (сравнимо с LWRP шефа, а может и проще) и на любом языке, хоть на awk.
+- Практически не вытягивает зависимостей в т.ч. для управляющей части (не помню как у puppet с этим)
+- Нет гемора с сертификатами
+- Нет гемора с hiera
+- Инвентарь проще (впрочем, из коробки в чем-то более ограничен, т.к. не хранит состояние клиентов), но тоже очень легко расширяется
 
 ### Архитектура
 ![ansible_architecture.png](img/ansible_architecture.png)
@@ -109,13 +119,16 @@ Ansible: безагентная система управления конфиг
   - параметром -i при запуске ansible и ansible-playbook.
 - Позволяет задать конкретный хост (по названию или ip адресу), пул адресов, группы с дополнительными настройками.
 - Базовый файл хоста см. [ansible_hosts.ini](../../work_directory/04/ansible_default_hosts.ini).
-  - в квадратных скобках указаны имена групп управляемых узлов,
+  - в квадратных скобках указаны имена групп управляемых узлов
+    - поддерживает наследование групп `[linux:children] -> [ubuntu] | [debian]`
+  - поддерживает wildcard
+    - `host*.example.org`: будет запущен на всех хостах, названия которых начинается с 'host'
+    - `host[0-2].example.org`: будет запущен на всех хостах, в названиях которых есть цифры
 
 Дополнительные настройки:
-- ansible_user=admin: смена пользователя для соединения
-- ansible_password=qwerty: указание пароля для соединения
-- ansible_port=3511: указание конкретного SSH порта
-
+- `ansible_user=admin`: смена пользователя для соединения
+- `ansible_password=qwerty`: указание пароля для соединения
+- `ansible_port=3511`: указание конкретного SSH порта
 
 #### Смена SSH порта
 через task
@@ -147,11 +160,15 @@ xcpng5.homelab.com ansible_port=3511
     - пример: ansible all --list-hosts
   - -i: указать путь до файла инвентаризации
   - -m: указать модуль (из установленных)
+  - -vvvv: печать verbose информацию (диагностическую)
+- `ansible -m ping all`: проверка пинга до всех хостов
 
 ### Встроенные модули
 - ansible.builtin.apt: установка, обновление
 - ansible.builtin.file: создание, удаление
-- ansible.builtin.copy,
+- ansible.builtin.copy:
+- setup: соберёт информацию о хостах
+- shell: запуск Bash скриптов
 
 ### Ansible Tasks example
 Являются словарями: ключ - значения.
@@ -223,7 +240,8 @@ State, как написано в документации — это в как�
   "ping": "pong"
 }
 ```
-- поправил 
+- настроил алиасы на хосты в `~/.ssh/config`
+- поправил файл инвентаризации на [hello_hosts.ini](../../work_directory/04/hello_hosts.ini)
 - Получил вывод на все хосты
 ```JSON
 vm-child3 | SUCCESS => {
@@ -249,6 +267,7 @@ vm-child2 | SUCCESS => {
 } 
 ```
 - `-u hryamzik`: Запуск от пользователя, вместо рута 
+
 #### Конфигурация хостов с одним ip
 - Проблема, в записи ниже ansible считает что хост один из-за одного ip адреса
 ```
@@ -259,7 +278,6 @@ VM-childs
 10.0.0.0 ansible_port=101
 ```
 - Вместо ip нужно использовать hostname и задать его в ~/.ssh/config
-- 
 ```
 Host graynetfirst
   HostName pieterbr1-w7.gray.net
@@ -271,55 +289,41 @@ Host graynetsecond
 ```
 
 ### Написание первого плейбука
-- создал файл `hello_playbook.yml` из примера
-- добавил хостов
-```yaml
-- # Kirill playbook playground
---- # Указывает на начало
-- hosts: "all"
-  become: true
-  tasks:
-    - name: "Install nginx via apt"
-      ansible.builtin.apt:
-        name: "nginx"
-        state: "latest"
-        update_cache: true
-
-    - name: "Delete /var/www/html folder"
-      ansible.builtin.file:
-        path: "/var/www/html"
-        state: "absent"
-
-    - name: "Copy our lending to /var/www/html folder"
-      ansible.builtin.copy:
-        scr: "files/html" # относительный путь у контролирующей ноды
-        dest: "/var/www/" # абсолютный путь у хоста
-        owner: "vagrant" # права доступа unix 
-        group: "vagrant" # без них будет создавать под root
-        mode: "0644"     # chmod
-... # Указывает на конец
-```
+- добавил хостов в [hello_hosts.ini](../../work_directory/04/hello_hosts.ini)
+- создал файл [hello_playbook.yml](../../work_directory/04/hello_playbook.yml)`hello_playbook.yml` из примера по установке nginx
 - `ansible-playbook hello_playbook.yml -i hosts.ini`: запустил плейбук
+- `become:true` использовал вместе с `become_method: sudo`
 
 ## Задание 2. Создай еще один плейбук со всеми предыдущими действиями по настройке сервера
 
 ## Вопросы к ментору:
 - В файле инветаризации можно указать пароль для входа, но если есть ssh-ключ под паролем, этот пароль для него будет использован?
+- Проброс ключей и настройка пользователей на хостах нужно делать до управления через ansible?
+  - Как это обычно делается?
+- Какую структуру / нейминг файлов организовать на хосте для разных сценариев? 
+  - Пример: `step-00/hosts`, `step-00/setup.yml`, `step-01/hosts`
+- Все плейбуки не лучше ли хранить в VCS?
+- Как делать откат если что-то пошло не так во время настройки?
+
 ## Ссылки
+- Гайды
+  - [Пособие по Ansible](https://habr.com/ru/articles/305400/) 2016
+  - [Автоматизируйте всё с помощью Ansible](https://habr.com/ru/companies/slurm/articles/738594/) 2023
 - Установка
   - [Ansible community documentation | Installing Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
   - [Installing Ansible on specific operating systems](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html#installing-distros)
   - [Python 3 | Virtual environment](https://docs.python.org/3/library/venv.html#creating-virtual-environments)
   - [Pip default behavior conflicts with virtualenv?](https://stackoverflow.com/questions/30604952/pip-default-behavior-conflicts-with-virtualenv)
 - Конфигурация
-  - [Configuring Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_configuration.html)
-  - [Автоматизируйте всё с помощью Ansible](https://habr.com/ru/companies/slurm/articles/738594/)
+  - [Ansible community documentation | Configuring Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_configuration.html)
   - [Ansible multiple hosts with port forwarding](https://stackoverflow.com/questions/26527458/ansible-multiple-hosts-with-port-forwarding)
   - [Ansible change ssh port in playbook](https://stackoverflow.com/questions/34333058/ansible-change-ssh-port-in-playbook)
+  - [Understanding privilege escalation: become](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_privilege_escalation.html)
 - Playbook
   - [Пишем первый плейбук Ansible](https://habr.com/ru/companies/slurm/articles/569172/)
   - [ansible.builtin.import_playbook module – Import a playbook](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/import_playbook_module.html)
-- [Основы автоматизации в Ansible: роли и сценарии](https://habr.com/ru/companies/slurm/articles/706920/)
-- [Пособие по Ansible](https://habr.com/ru/articles/305400/)
-- [Основы Ansible, без которых ваши плейбуки — комок слипшихся макарон](https://habr.com/ru/articles/508762/)
-- https://habr.com/ru/articles/509938/
+  - [Основы автоматизации в Ansible: роли и сценарии](https://habr.com/ru/companies/slurm/articles/706920/)
+  - [Error handling in playbooks](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_error_handling.html#error-handling-in-playbooks)
+- Best practice
+  - [Основы Ansible, без которых ваши плейбуки — комок слипшихся макарон](https://habr.com/ru/articles/508762/)
+  - [Основы Ansible, без которых ваши плейбуки — комок слипшихся макарон, часть 2](https://habr.com/ru/articles/509938/)

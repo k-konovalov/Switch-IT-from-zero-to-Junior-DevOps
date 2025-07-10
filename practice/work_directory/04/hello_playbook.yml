@@ -1,0 +1,25 @@
+# Kirill playbook playground
+--- # Указывает на начало
+- hosts: "vm-childs"
+  become: true # попытаться выполнить под root
+  become_method: sudo
+  tasks:
+    - name: "Install nginx via apt"
+      ansible.builtin.apt:
+        name: "nginx"
+        state: "latest"
+        update_cache: true
+
+    - name: "Delete /var/www/html folder"
+      ansible.builtin.file:
+        path: "/var/www/html"
+        state: "absent"
+
+#    - name: "Copy our lending to /var/www/html folder"
+#      ansible.builtin.copy:
+#        scr: "files/html" # относительный путь у контролирующей ноды
+#        dest: "/var/www/" # абсолютный путь у хоста
+#        owner: "vagrant" # права доступа unix
+#        group: "vagrant" # без них будет создавать под root
+#        mode: "0644"     # chmod
+... # Указывает на конец
