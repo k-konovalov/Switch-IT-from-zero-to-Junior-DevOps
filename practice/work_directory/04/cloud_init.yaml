@@ -1,0 +1,6 @@
+#cloud-config
+users:
+  - name: root
+    ssh-authorized-keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPXUqFply+b0IOrMXokyIZkE/ZLnoG8Vep5QNem5RCSO Kirills-home-notebook
+      #- <ВАШ_ПУБЛИЧНЫЙ_КЛЮЧ_SSH>

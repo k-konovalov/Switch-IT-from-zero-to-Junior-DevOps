@@ -40,6 +40,9 @@ Proxmox Virtual Environment - open source платформа виртуализ�
 В целом установка не отличается от обычной установки debian, с некоторыми нюансами. После установки желательно установить community скрипты.
 - CE скрипты после установки [старое](https://github.com/tteck/Proxmox?tab=readme-ov-file) -> [новое](https://github.com/community-scripts/ProxmoxVE/blob/main/misc/post-pve-install.sh)
 
+### Конфиги ВМ
+- `/etc/pve/nodes/PVE-Virtual/qemu-server/*`
+
 #### Настройка сети в Proxmox
 Решил настроить сеть между хостом и дочерними ВМ в режиме сетевого моста (bridge). ВМ и Хост будут в одной подсети и использовать IP-адреса этой подсети т.н [внешняя сеть](https://interface31.ru/tech_it/2019/10/nastraivaem-set-v-proxmox-ve.html).  
 DHCP / DNS сервером выступает сетевой маршрутизатор. Во всех случаях нужно учесть, что порты открыты на роутерах / хосте / сетевых брандмауерах. Более подробно про сети см. в [01_01_Network_iptables.md](additional/01_01_Network_iptables.md) и т.п.
@@ -57,9 +60,32 @@ DHCP / DNS сервером выступает сетевой маршрутиз
 ## 2. Создание n ВМ
 - Из дистрибутивов взял Debian 12 из образа. Proxmox позволяет указать либо конкретный URL, либо выбрать из предустановленных.
 - На основе образа завел 3 виртуалки под QEMU, специально не стал клонировать, а именно через Create VM.
-- Нейминг VM: n.child.debian
+- Нейминг VM: 0n.child.debian
 - Каждую вручную установил через Graphical install.
 - По-дефолту завел пользователя root и kirillkonovalov.
+
+### Полезные команды к qemu
+- qm list: выводит текущие вм
+- qm set {vmid}: выставить настройки
+
+### cloud init образ
+Позволяющие раскатывать кластера на основе настроенных образов. Для Proxmox подходят open stack.  
+Взял версию generic cloud.
+```Bash
+qm create 700 --name "alse-vanilla-1-7-3-cloudinit-max-template" --memory 2048 --cores 2 --net0 virtio,bridge=vmbr0
+qm importdisk 700 alse-vanilla-1.7.3-cloud-max-mg8.2.1.qcow2 local-lvm
+qm set 700 --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-700-disk-0
+qm set 700 --boot c --bootdisk scsi0
+qm set 700 --ide2 local-lvm:cloudinit
+qm set 700 --serial0 socket --vga serial0
+qm set 700 --agent enabled=1
+qm template 700
+```
+
+#### ISO to QCOW2 Convert
+- `apt-get update -y`
+- `apt-get install -y qemu-utils`
+- `qemu-img convert -f raw -O qcow2 image.img image.qcow2`
 
 ### Troubeshooting
 - trying to aquire lock...TASK ERROR: can't lock file '/var/lock/qemu-server/...
@@ -69,7 +95,7 @@ DHCP / DNS сервером выступает сетевой маршрутиз
 
 ### Ручное добавление пункта меню в Grub (dualboot)
 **Простой путь**
-- `nano /etc/default/grub`: конфиг grub
+- `nano /etc/default/grub` и `/etc/grub.d/`: конфиг grub
 - `GRUB_DISABLE_OS_PROBER=false`: включаем os-prober
 - `update-grub2`: обновляем конфиг grub
 **Сложный путь**
@@ -122,8 +148,15 @@ DHCP / DNS сервером выступает сетевой маршрутиз
   - [Основы iptables для начинающих. Часть 4. Таблица nat - типовые сценарии использования](https://interface31.ru/tech_it/2021/08/osnovy-iptables-dlya-nachinayushhih-chast-4-tablica-nat-tipovye-scenarii-ispolzovaniya.html)
 - Proxmox
   - [Домашний сервер на базе Proxmox](https://habr.com/ru/companies/banki/articles/827760/)
+  - Cloud init
+    - [Debian Official Cloud Images](https://cloud.debian.org/images/cloud/)
+    - [Converting between image formats](https://docs.openstack.org/image-guide/convert-images.html)
+  - [Создание образа в Cloud-init](https://habr.com/ru/articles/876750/)
+  - [proxmox-cloud-init-tutorial](https://github.com/mmmex/proxmox-cloud-init-tutorial)
   - [Установка сети в Proxmox](https://help.reg.ru/support/vydelennyye-servery-i-dc/administrirovaniye-vydelennykh-serverov/ustanovka-i-nastroyka-seti-v-proxmox-ve#1)
   - [Настраиваем сеть в Proxmox](https://interface31.ru/tech_it/2019/10/nastraivaem-set-v-proxmox-ve.html)
+  - [Как создать cloud-init шаблон из образа ОС Astra Linux в Proxmox](https://habr.com/ru/articles/706434/)
+  - [Proxmox Ve How to Fixed Upgrade Error](https://echowings.github.io/p/proxmox-ve-how-to-fixed-upgrade-error/)
 - Grub
   - [Solution to os-prober not finding other operating systems (Windows & Linux)](https://www.umutsagir.com/solution-to-os-prober-not-finding-other-operating-systems-windows-linux/)
   - [How can I add Windows 11 to grub menu?](https://askubuntu.com/questions/1425637/how-can-i-add-windows-11-to-grub-menu)
