@@ -42,6 +42,7 @@ Proxmox Virtual Environment - open source платформа виртуализ�
 
 ### Конфиги ВМ
 - `/etc/pve/nodes/PVE-Virtual/qemu-server/*`
+- `/etc/pve/qemu-server`
 
 #### Настройка сети в Proxmox
 Решил настроить сеть между хостом и дочерними ВМ в режиме сетевого моста (bridge). ВМ и Хост будут в одной подсети и использовать IP-адреса этой подсети т.н [внешняя сеть](https://interface31.ru/tech_it/2019/10/nastraivaem-set-v-proxmox-ve.html).  
