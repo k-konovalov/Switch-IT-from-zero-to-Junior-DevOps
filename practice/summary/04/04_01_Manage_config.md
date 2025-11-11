@@ -36,10 +36,23 @@ Ansible: безагентная система управления конфиг
 - Ansible является идемпотентной системой. Если система соответствует тому статусу, который ожидается, то иных изменений не будет.
 
 #### Права доступа
-По-умолчанию в Ansible существует политика выполнения команд от того пользователя, которым вы залогинились.
-- `become: true`: запрос к Ansible, для использования вместо текущего пользователя root
-  - будет выполняться для всех task в этом play
-  - можно использовать внутри task
+По-умолчанию в Ansible существует политика выполнения команд от того пользователя, которым вы залогинились.  
+Для переопределения данного поведения можно использовать:
+- в playbook
+  - `become: true`: запрос к Ansible, для использования вместо текущего пользователя root
+    - будет выполняться для всех task в этом play
+    - можно использовать внутри task
+    - become_method: su / sudo
+    - become_user: root
+  - `ansible.posix.authorized_key`: для прокидывания ssh ключей
+- в hosts.ini
+    - `ansible_user=root`: переопределение пользователя для хоста
+    - 
+    - Пример: `[vm_server] \n vm_server ansible_user=root`
+- при выполнении команды на запуск:
+  - `--ask-become-pass`: запрос пароля перед запуском (для всех хостов)
+  - `--become`: переопределить поведение
+    - см. в: [повышение прав](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_privilege_escalation.html)
 
 ### Требования к node
 - Control node: любая UNIX совместимая машина с установленным Python.
@@ -205,7 +218,8 @@ State, как написано в документации — это в как�
   - `source activate`: загружаем настройки в терминал
   - возможно потребуется установить pip3
   - `python3 -m pip install --user ansible`: установка ansible для текущего пользователя
-- `brew install ansible`: установка на macOS
+- MacOS: утсановка
+  - `brew install ansible`
 - `ansible --version`: проверяем установку
 
 ### Конфигурация хостов (Ansible inventory)
@@ -295,6 +309,17 @@ Host graynetsecond
 - `become:true` использовал вместе с `become_method: sudo`
 
 ## Задание 2. Создай еще один плейбук со всеми предыдущими действиями по настройке сервера
+
+### Настройка сервера PVE
+- Залил свежий образ
+- Закинул `ssh-ключ` через `ssh-copy-id`
+- Запустил playbook `00.setup-server.yaml` через `ansible-playbook 00.setup-server.yaml --ask-become-pass`
+  - где, --ask-become-pass запрос пароля
+  - 
+Итоговый playbook см. в [00.setup-server.yaml](../../work_directory/04/00.setup-server.yaml)
+
+### Настройка ВМ
+
 ### Подготовил образ диска с свежеустановленным Debian
 - /etc/pve/nodes/proxmox/qemu-server/
 ### Создание ВМ из CLI proxmox на основе созданного образа (проброс ключей от контролирующей ноды к серверу)

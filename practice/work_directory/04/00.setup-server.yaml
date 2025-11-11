@@ -1,0 +1,61 @@
+# Настройка сервера после свежей раскатки образа
+# Предварительно необходимо проверить наличие ssh ключа на сервере и закинуть его при необходимости через ssh-copy-id
+
+# Необохдимые шаги
+## Обновление пакетов - done
+# apt-get update
+# apt upgrade
+## Установка необходимых пакетов
+### zsh, sudo, vim, mc, htop, btop, netstat, net-tools
+# apt-get install *
+
+## Настройка .ssh/config
+# Создание пользователя kirillkonovalov и добавление в группу sudo (отдельный playbook?)
+# Проброс портов (masquerade) в ip tables?
+
+# Kirill playbook playground
+--- # Указывает на начало
+- hosts: "vm_server"
+  become: true # попытаться выполнить под root
+  become_method: su
+  become_user: root
+  tasks:
+    - name: "Upgrade OS"
+      ansible.builtin.apt:
+        upgrade: "yes"
+
+    - name: "Install zero-install packages via apt"
+      ansible.builtin.apt:
+        pkg:
+          - sudo
+          - zsh
+          - mc
+          - vim
+          - htop
+          - net-tools
+        state: "latest"
+       # update_cache: true
+
+    - name: Update all packages to their latest version
+      ansible.builtin.apt:
+        name: "*"
+        state: latest
+
+    - name: "Delete unused packages"
+      ansible.builtin.apt:
+        autoremove: true
+
+    - name: "Add admin group"
+      ansible.builtin.group:
+        name: admin
+        state: present
+        gid: 1001
+
+    - name: "Add admin user"
+      ansible.builtin.user:
+        name: admin
+        append: true
+        groups: 'admin, sudo'
+
+
+... # Указывает на конец
