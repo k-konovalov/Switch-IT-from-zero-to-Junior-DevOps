@@ -45,17 +45,8 @@
       ansible.builtin.apt:
         autoremove: true
 
-    - name: "Add admin group"
-      ansible.builtin.group:
-        name: admin
-        state: present
-        gid: 1001
-
-    - name: "Add admin user"
-      ansible.builtin.user:
-        name: admin
-        append: true
-        groups: 'admin, sudo'
-
+#    - name: "Install community PVE Post Install script"
+#      ansible.builtin.shell:
+#        cmd: bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/tools/pve/post-pve-install.sh)
 
 ... # Указывает на конец
