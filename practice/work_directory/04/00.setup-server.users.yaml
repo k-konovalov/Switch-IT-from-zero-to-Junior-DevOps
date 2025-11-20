@@ -1,0 +1,73 @@
+# Настройка сервера после свежей раскатки образа
+# Предварительно необходимо проверить наличие ssh ключа на сервере и закинуть его при необходимости через ssh-copy-id
+
+# Необохдимые шаги
+## Обновление пакетов - done
+# apt-get update
+# apt upgrade
+## Установка необходимых пакетов
+### zsh, sudo, vim, mc, htop, btop, netstat, net-tools
+# apt-get install *
+
+## Настройка .ssh/config
+# Создание пользователя kirillkonovalov и добавление в группу sudo (отдельный playbook?)
+# Проброс портов (masquerade) в ip tables?
+
+# Kirill playbook playground
+--- # Указывает на начало
+- hosts: "vm_server"
+  become: true # попытаться выполнить под root
+  become_method: su
+  become_user: root
+  tasks:
+    - name: "Add admin group"
+      ansible.builtin.group:
+        state: present
+        name: admin
+        gid: 1001
+
+    - name: "Add user to admin group"
+      register: admin_kirillkonovalov
+      ansible.builtin.user:
+        state: present
+        name: admin_kirillkonovalov
+        # password: "{{ 'one_time_pw' | password_hash('sha512') }}"
+        force: true
+        create_home: yes
+        append: true
+        groups: 'admin, sudo'
+
+    - name: "Allow execute under sudo"
+      community.general.sudoers:
+        name: admin_allow_rule
+        state: present
+        user: admin_kirillkonovalov
+        nopassword: true
+        commands: ALL
+
+    - name: "Fix home folder owner"
+      ansible.builtin.file:
+        path: /home/admin_kirillkonovalov
+        owner: admin_kirillkonovalov
+        group: admin
+        mode: '770'
+
+    - name: "Allow anyone in group to rw in home folder"
+      ansible.builtin.file:
+        path: /home/admin_kirillkonovalov
+        owner: admin_kirillkonovalov
+        group: admin
+        mode: 'g+s'
+
+    - name: "Set authorized SSH key taken from file from controller node"
+      ansible.posix.authorized_key:
+        user: admin_kirillkonovalov
+        state: present
+        key: "{{ lookup('file', '/Users/kirillkonovalov/.ssh/id_admin_kirillkonovalov_ed25519.pub') }}"
+
+    # ssh-keygen -C admin-kirillkonovalov -t ed25519 -f ~/.ssh/id_admin_kirillkonovalov_ed25519 -P ""
+    # -C # Комментарий -t  # Тип шифрования -f # Указание имени
+    # ssh-copy-id -i ~/.ssh/id_admin_kirillkonovalov_ed25519.pub -p 22100 admin_kirillkonovalov@77.37.200.118
+    # Не сработал пытался создать от имени пользака. Не хватает permissions.
+    # scp -P 22100 ~/.ssh/id_admin_kirillkonovalov_ed25519.pub root@77.37.200.118@10.0.0.0:/home/admin_kirillkonovalov/.ssh/
+... # Указывает на конец
