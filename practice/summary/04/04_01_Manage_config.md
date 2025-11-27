@@ -316,7 +316,7 @@ Host graynetsecond
 - Запустил playbook `00.setup-server.yaml` через `ansible-playbook 00.setup-server.yaml --ask-become-pass`
   - где, --ask-become-pass запрос пароля
   - 
-Итоговый playbook см. в [00.setup-server.yaml](../../work_directory/04/00.setup-server.update.yaml)
+Итоговый playbook см. в [00.setup-server.yaml](../../work_directory/04/00.01.setup_server.update.yaml)
 
 ### Настройка ВМ
 

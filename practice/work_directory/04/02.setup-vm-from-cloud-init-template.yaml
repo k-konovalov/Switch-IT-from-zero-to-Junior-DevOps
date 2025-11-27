@@ -1,0 +1,16 @@
+# Настройка дочерней VM после свежей раскатки образа
+
+--- # Указывает на начало
+- hosts: "vm_server"
+  become: true # попытаться выполнить под root
+  become_method: su
+  become_user: root
+  vars:
+    username: admin_kirillkonovalov
+  tasks:
+    - name: "Add admin group"
+      ansible.builtin.group:
+        state: present
+        name: admin
+        gid: 1001
+... # Указывает на конец

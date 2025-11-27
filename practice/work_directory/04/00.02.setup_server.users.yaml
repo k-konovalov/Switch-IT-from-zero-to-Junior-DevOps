@@ -19,6 +19,8 @@
   become: true # попытаться выполнить под root
   become_method: su
   become_user: root
+  vars:
+    username: admin_kirillkonovalov
   tasks:
     - name: "Add admin group"
       ansible.builtin.group:
@@ -27,10 +29,9 @@
         gid: 1001
 
     - name: "Add user to admin group"
-      register: admin_kirillkonovalov
       ansible.builtin.user:
         state: present
-        name: admin_kirillkonovalov
+        name: '{{ username }}'
         # password: "{{ 'one_time_pw' | password_hash('sha512') }}"
         force: true
         create_home: yes
@@ -41,29 +42,29 @@
       community.general.sudoers:
         name: admin_allow_rule
         state: present
-        user: admin_kirillkonovalov
+        user: '{{ username }}'
         nopassword: true
         commands: ALL
 
     - name: "Fix home folder owner"
       ansible.builtin.file:
-        path: /home/admin_kirillkonovalov
-        owner: admin_kirillkonovalov
+        path: '/home/{{ username }}'
+        owner: '{{ username }}'
         group: admin
         mode: '770'
 
     - name: "Allow anyone in group to rw in home folder"
       ansible.builtin.file:
-        path: /home/admin_kirillkonovalov
-        owner: admin_kirillkonovalov
+        path: '/home/{{ username }}'
+        owner: '{{ username }}'
         group: admin
         mode: 'g+s'
 
     - name: "Set authorized SSH key taken from file from controller node"
       ansible.posix.authorized_key:
-        user: admin_kirillkonovalov
+        user: '{{ username }}'
         state: present
-        key: "{{ lookup('file', '/Users/kirillkonovalov/.ssh/id_admin_kirillkonovalov_ed25519.pub') }}"
+        key: "{{ lookup('file', '/Users/kirillkonovalov/.ssh/id_'{{ username }}'_ed25519.pub') }}"
 
     # ssh-keygen -C admin-kirillkonovalov -t ed25519 -f ~/.ssh/id_admin_kirillkonovalov_ed25519 -P ""
     # -C # Комментарий -t  # Тип шифрования -f # Указание имени

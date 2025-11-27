@@ -1,0 +1,12 @@
+# Настройка VGPU на хосте
+
+--- # Указывает на начало
+- hosts: "vm_server"
+  become: true # попытаться выполнить под root
+  become_method: su
+  become_user: root
+  tasks:
+    - name: "Upgrade OS"
+      ansible.builtin.apt:
+        upgrade: "yes"
+... # Указывает на конец
