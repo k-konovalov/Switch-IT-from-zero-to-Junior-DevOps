@@ -2,11 +2,58 @@
 
 --- # Указывает на начало
 - hosts: "vm_server"
-  become: true # попытаться выполнить под root
-  become_method: su
-  become_user: root
+  become: true # попытаться выполнить под указанным пользователем
+  become_method: sudo
+  become_user: admin_kirillkonovalov
   tasks:
-    - name: "Upgrade OS"
+    - name: "Upgrade GRUB"
       ansible.builtin.apt:
-        upgrade: "yes"
+        upgrade:
+          - nano /etc/default/grub
+          - GRUB_CMDLINE_LINUX_DEFAULT="quiet intel_iommu=on amd_iommu=on iommu=pt"
+          - update-grub
+    - name: "Modify modprobe"
+      ansible.builtin.apt:
+        command:
+          - echo "options vfio_iommu_type1 allow_unsafe_interrupts=1" > /etc/modprobe.d/iommu_unsafe_interrupts.conf
+          - echo "options kvm ignore_msrs=1" > /etc/modprobe.d/kvm.conf
+    - name: "Modify modules"
+      ansible.builtin.apt:
+        - command:
+            - nano /etc/modules
+            - echo vfio >> /etc/modules
+            - vfio_iommu_type1
+            - vfio_pci
+            - vfio_virqfd
+    - name: "Restrist host to use GPU"
+      ansible.builtin.apt:
+        - command:
+            - AMD GPUs
+            - # echo "blacklist amdgpu" >> /etc/modprobe.d/blacklist.conf
+            - # echo "blacklist radeon" >> /etc/modprobe.d/blacklist.conf
+            NVIDIA GPUs
+            - # echo "blacklist nouveau" >> /etc/modprobe.d/blacklist.conf
+            - # echo "blacklist nvidia*" >> /etc/modprobe.d/blacklist.conf
+            - Intel GPUs
+            # echo "blacklist i915" >> /etc/modprobe.d/blacklist.conf
+
+    - name: "Search installed GPU PCI id"
+      ansible.builtin.apt:
+        - command:
+            - lspci | grep NVIDIA |  awk '{print $1}' # print relative id ex: 01:00.0
+            - lspci -n -s 01:00.0 | awk '{print $3}' # ex: 10de:2d04
+    # # for g in $(find /sys/kernel/iommu_groups/* -maxdepth 0 -type d | sort -V); do
+    #    echo "IOMMU Group ${g##*/}:"
+    #    for d in $g/devices/*; do
+    #        echo -e "\t$(lspci -nns ${d##*/})"
+    #    done;
+    #done;
+    - name: "Activate vfio-pci for GPU"
+      ansible.builtin.apt:
+        - command:
+            - echo options vfio-pci ids=10de:1b81,10de:10f0 disable_vga=1 >> /etc/modprobe.d/vfio.conf
+    - name: "Activate settings"
+      ansible.builtin.apt:
+        - command:
+            - update-initramfs -u -k all
 ... # Указывает на конец
