@@ -7,11 +7,11 @@
   tasks:
     - name: Extract AMD PCI IDs
       ansible.builtin.shell: "lspci | grep NVIDIA"
-      register: lspci_output_amd
+      register: lspci_output_nvidia
 
     - name: Extract NVIDIA PCI IDs
       ansible.builtin.shell: "lspci | grep AMD"
-      register: lspci_output_nvidia
+      register: lspci_output_amd
 
     - name: Display AMD IDs as a string
       ansible.builtin.debug:
@@ -21,86 +21,44 @@
       ansible.builtin.debug:
         var: lspci_output_nvidia
 
-    - name: Extract AMD and NVIDIA PCI IDs
-      ansible.builtin.set_fact:
-        pci_id_relative_amd: "{{ pci_id_relative_amd | default([]) + [item.split()[0]] }}"  # Добавляем идентификатор устройства в список для AMD
-        pci_id_relative_nvidia: "{{ pci_id_relative_nvidia | default([]) + [item.split()[0]] }}"  # Добавляем идентификатор устройства в список для NVIDIA
-      loop: "{{ lspci_output.stdout_lines }}"  # Проходим по каждой строке вывода команды lspci
-      when:
-        - "'AMD' in item or 'NVIDIA' in item"  # Проверяем, содержит ли строка упоминания AMD или NVIDIA
-      vars:
-        device_id: "{{ item.split()[0] }}"
+    - name: Extract NVIDIA PCI IDs
+      ansible.builtin.shell: "lspci -n -s {{ item.split(' ')[0] }} | awk '{print $3}'"
+      with_items: "{{ lspci_output_nvidia.stdout_lines }}"  # Проходим по каждой строке вывода команды lspci
+      register: lspci_output_asbolute_nvidia
       tags:
         - parsing
 
-    - name: Group PCI IDs by the number before the colon
-      ansible.builtin.set_fact:
-        pci_id_relative_amd: "{{ pci_id_relative_amd | combine({item: pci_id_relative_amd[item] | default([]) + [device_id]}) }}"  # Группируем идентификаторы устройств AMD по числу перед двоеточием
-        pci_id_relative_nvidia: "{{ pci_id_relative_nvidia | combine({item: pci_id_relative_nvidia[item] | default([]) + [device_id]}) }}"  # Группируем идентификаторы устройств NVIDIA по числу перед двоеточием
-      with_items: "{{ pci_id_relative_amd + pci_id_relative_nvidia }}"  # Проходим по объединённому списку идентификаторов AMD и NVIDIA
-      vars:
-        device_id: "{{ item }}"
-        group_key: "{{ item.split(':')[0] }}"
-      when:
-        - device_id in pci_id_relative_amd and group_key in pci_id_relative_amd.keys() or device_id not in pci_id_relative_amd.keys()  # Проверяем, есть ли идентификатор в списке AMD и соответствующая группа
-        - device_id in pci_id_relative_nvidia and group_key in pci_id_relative_nvidia.keys() or device_id not in pci_id_relative_nvidia.keys()  # Проверяем, есть ли идентификатор в списке NVIDIA и соответствующая группа
+    #- name: Extract AMD PCI IDs
+    #  ansible.builtin.shell: "lspci -n -s {{ item.split(' ')[0] }} | awk '{print $3}'"
+    #  with_items: "{{ lspci_output_amd.stdout_lines }}"  # Проходим по каждой строке вывода команды lspci
+    #  register: lspci_output_asbolute_amd
+    #  tags:
+    #    - parsing
 
-    - name: Get detailed lspci info for each NVIDIA device
-      ansible.builtin.shell: "lspci -n -s {{ item }}"  # Получаем детальную информацию о каждом устройстве NVIDIA
-      register: pci_id_absolute_nvidia
-      with_items: "{{ pci_id_relative_nvidia }"  # Проходим по списку идентификаторов устройств NVIDIA
-
-    - name: Organize NVIDIA detailed info by group
-      ansible.builtin.set_fact:
-        pci_id_absolute_nvidia: "{{ pci_id_absolute_nvidia | default({}) | combine({group_key: pci_id_absolute_nvidia[group_key] | default([]) + [{'id': item, 'info': pci_id_absolute_nvidia_results[index].stdout}]}) }}"  # Организуем детальную информацию о устройствах NVIDIA по группам
-      loop: "{{ pci_id_relative_nvidia }"  # Проходим по списку идентификаторов устройств NVIDIA
-      vars:
-        index: "{{ loop.index0 }}"
-        group_key: "{{ item.split(':')[0] }}"
-        pci_id_absolute_nvidia_results: "{{ pci_id_absolute_nvidia.results }"
-
-    - name: Get detailed lspci info for each AMD device
-      ansible.builtin.shell: "lspci -n -s {{ item }}"  # Получаем детальную информацию о каждом устройстве AMD
-      register: pci_id_absolute_amd
-      with_items: "{{ pci_id_relative_amd }"  # Проходим по списку идентификаторов устройств AMD
-
-    - name: Organize AMD detailed info by group
-      ansible.builtin.set_fact:
-        pci_id_absolute_amd: "{{ pci_id_absolute_amd | default({}) | combine({group_key: pci_id_absolute_amd[group_key] | default([]) + [{'id': item, 'info': pci_id_absolute_amd_results[index].stdout}]}) }"  # Организуем детальную информацию о устройствах AMD по группам
-      loop: "{{ pci_id_relative_amd }"  # Проходим по списку идентификаторов устройств AMD
-      vars:
-        index: "{{ loop.index0 }}"
-        group_key: "{{ item.split(':')[0] }}"
-        pci_id_absolute_amd_results: "{{ pci_id_absolute_amd.results }"
-
-    - name: Convert NVIDIA detailed info to string
-      ansible.builtin.set_fact:
-        nvidia_ids_string: "{{ nvidia_ids_string | default('') ~ (item.info.split()[1] ~ ', ') }}"  # Преобразуем детальную информацию о устройствах NVIDIA в строку, разделяя идентификаторы запятыми
-      loop: "{{ pci_id_absolute_nvidia.values() | sum(start=[]) | map('extract', pci_id_absolute_nvidia) | list }"  # Проходим по значениям словаря с детальной информацией о устройствах NVIDIA
-      vars:
-        item_info: "{{ item[0].info }"
-
-    - name: Trim trailing comma from NVIDIA IDs string
-      ansible.builtin.set_fact:
-        nvidia_ids_string: "{{ nvidia_ids_string[:-2] }}"  # Удаляем завершающую запятую из строки с идентификаторами NVIDIA
-
-    - name: Convert AMD detailed info to string
-      ansible.builtin.set_fact:
-        amd_ids_string: "{{ amd_ids_string | default('') ~ (item.info.split()[1] ~ ', ') }}"  # Преобразуем детальную информацию о устройствах AMD в строку, разделяя идентификаторы запятыми
-      loop: "{{ pci_id_absolute_amd.values() | sum(start=[]) | map('extract', pci_id_absolute_amd) | list }"  # Проходим по значениям словаря с детальной информацией о устройствах AMD
-      vars:
-        item_info: "{{ item[0].info }"
-
-    - name: Trim trailing comma from AMD IDs string
-      ansible.builtin.set_fact:
-        amd_ids_string: "{{ amd_ids_string[:-2] }}"  # Удаляем завершающую запятую из строки с идентификаторами AMD
-
-    - name: Display AMD and NVIDIA IDs as a string
+    - name: Display NVIDIA IDs as a list
       ansible.builtin.debug:
-        var: {
-          "NVIDIA IDs": nvidia_ids_string,
-          "AMD IDs": amd_ids_string
-        }
+        var: lspci_output_asbolute_nvidia
+
+    #- name: Display AMD IDs as a list
+    #  ansible.builtin.debug:
+    #    var: lspci_output_asbolute_amd
+
+    #- name: Join AMD PCI IDs
+    #  ansible.builtin.set_fact:
+    #    myvar: "{{ lspci_output_asbolute_amd.results | join(',') }}"
+
+    - name: Join NVIDIA PCI IDs
+      ansible.builtin.set_fact:
+        lspci_output_asbolute_nvidia_as_str: "{{ lspci_output_asbolute_nvidia_as_str | default() + ',' + item.stdout_lines[0] }}"
+      with_items:  "{{ lspci_output_asbolute_nvidia.results }}"
+
+    - name: Trim NVIDIA PCI IDs - 2
+      ansible.builtin.set_fact:
+        lspci_output_asbolute_nvidia_as_str: "{{ lspci_output_asbolute_nvidia_as_str | trim(',') }}"
+
+    - name: Display NVIDIA IDs as a string
+      ansible.builtin.debug:
+        var: lspci_output_asbolute_nvidia_as_str
 
     #- name: Append NVIDIA IDs to /etc/modprobe.d/vfio.conf
     #  ansible.builtin.lineinfile:
@@ -109,9 +67,9 @@
     #    create: yes
     #    insertafter: EOF
 
-    #- name: Append AMD IDs to /etc/modprobe.d/vfio.conf
-    #  ansible.builtin.lineinfile:
-    #    path: /etc/modprobe.d/vfio.conf
-    #    line: "options vfio-pci ids={{ amd_ids_string }} disable_vga=1"
-    #    create: yes
-    #    insertafter: EOF
+    - name: Append NVIDIA to /etc/modprobe.d/vfio.conf
+      ansible.builtin.lineinfile:
+        path: /etc/modprobe.d/vfio.conf
+        line: "options vfio-pci ids={{ lspci_output_asbolute_nvidia_as_strчц }} disable_vga=1 # NVIDIA"
+        create: yes
+        insertafter: EOF
