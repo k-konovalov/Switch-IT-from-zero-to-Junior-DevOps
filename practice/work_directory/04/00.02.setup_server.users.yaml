@@ -66,7 +66,14 @@
         state: present
         key: "{{ lookup('file', '/Users/kirillkonovalov/.ssh/id_'{{ username }}'_ed25519.pub') }}"
 
-    # ssh-keygen -C admin-kirillkonovalov -t ed25519 -f ~/.ssh/id_admin_kirillkonovalov_ed25519 -P ""
+    - name: "Generate admin SSH key"
+      become_method: su
+      become_user: '{{ username }}'
+      ansible.builtin.shell:
+        cmd: ssh-keygen -C '{{ username }}' -t ed25519 -f ~/.ssh/id_'{{ username }}'_ed25519
+        creates: ~/.ssh/id_'{{ username }}'_ed25519.pub
+
+    # ssh-keygen -C admin-kirillkonovalov -t ed25519 -f ~/.ssh/id_admin_kirillkonovalov_ed25519
     # -C # Комментарий -t  # Тип шифрования -f # Указание имени
     # ssh-copy-id -i ~/.ssh/id_admin_kirillkonovalov_ed25519.pub -p 22100 admin_kirillkonovalov@77.37.200.118
     # Не сработал пытался создать от имени пользака. Не хватает permissions.
